@@ -1,0 +1,106 @@
+prompt.txt
+==========
+
+PROMPT 1:
+I'm working on a C project that reads student data. I defined the struct like this:
+struct Student {
+    int id;
+    char name[50];
+    float marks;
+};
+When I use scanf("%s", &s[i].name) it gives a warning. What's wrong?
+
+RESPONSE 1:
+The issue is that name is already a char array, so it decays to a pointer automatically.
+Using &s[i].name gives a pointer-to-array (char (*)[50]) instead of char*.
+Fix: use scanf("%s", s[i].name) without the & symbol.
+
+
+------------------------------------------------------------
+
+PROMPT 2:
+I want to read the full name including spaces like "Alice Johnson".
+My scanf("%s") only reads one word. How do I fix that?
+
+RESPONSE 2:
+Use scanf(" %[^\n]", s[i].name) instead of %s.
+The space before % skips leftover newline from previous input,
+and [^\n] reads everything until Enter is pressed.
+
+
+------------------------------------------------------------
+
+PROMPT 3:
+How do I print a prompt for each student like:
+"Enter the id of Student 1:"
+"Enter the id of Student 2:" and so on?
+
+RESPONSE 3:
+Use the loop counter i+1 inside printf before each scanf:
+    printf("Enter the id of Student %d: ", i + 1);
+    scanf("%d", &s[i].id);
+Do the same for name and marks.
+
+
+------------------------------------------------------------
+
+PROMPT 4:
+I'm writing the student data to a file using fprintf.
+The output format required is: Alice 56 94
+But I'm printing id first. How should I order it?
+
+RESPONSE 4:
+Change your fprintf to print name first, then id, then marks:
+    fprintf(fp, "%s %d %.0f\n", s[i].name, s[i].id, s[i].marks);
+Use %.0f to print marks as a whole number without decimals.
+
+
+------------------------------------------------------------
+
+PROMPT 5:
+When reading back from the file using fscanf,
+it reads into name first now but I'm not sure how to match
+the new order. Also should I use &s[i].name or s[i].name?
+
+RESPONSE 5:
+Since you changed the file format to name-id-marks order,
+update fscanf to match:
+    fscanf(fp, "%s %d %f", s[i].name, &s[i].id, &s[i].marks)
+Use s[i].name without & since it's a char array (already a pointer).
+Also check the return value == 3 instead of != EOF for safety.
+
+
+------------------------------------------------------------
+
+PROMPT 6:
+My display function has a table format with headers like ID, Name, Marks.
+But the required output just says:
+--- students record details ---
+Alice 56 94
+Bob 78 89
+How do I change it?
+
+RESPONSE 6:
+Replace your existing displayStudents function with:
+    printf("\n--- students record details ---\n");
+    for(int i = 0; i < n; i++) {
+        printf("%s %d %.0f\n", s[i].name, s[i].id, s[i].marks);
+    }
+Remove the old header/separator lines completely.
+
+
+------------------------------------------------------------
+
+PROMPT 7:
+After writing to the file my code prints:
+"Data successfully written to students.txt"
+But that message is not in the required output.
+Will it cause any issue if I leave it?
+
+RESPONSE 7:
+It won't cause a compilation error but it will affect the output.
+Since the required output doesn't include that message,
+remove that printf line from your writeToFile function
+to keep the output clean and matching exactly.
+
+------------------------------------------------------------
